@@ -1105,19 +1105,16 @@ void WaveshareEPaper5P6In::initialize() {
   this->data(0x00);  // VGH=20V,VGL=-20V
   this->data(0x05);  // VDH=15V
   this->data(0x05);  // VDL=-15V
+  // COMMAND BOOSTER SOFT START
+  this->command(0x06);
+  this->data(0xC7);
+  this->data(0xC7);
+  this->data(0x1D);
   // COMMAND POWER ON
-  this->command(0x03);
+  this->command(0x30);
+  this->data(0x39);
   delay(100);  // NOLINT
   this->wait_until_idle_();
-  // COMMAND PANEL SETTING
-  this->command(0x00);
-  this->data(0x0F);  // KW3f, KWR-2F, BWROTP 0f, BWOTP 1f
-  // COMMAND RESOLUTION SETTING
-  this->command(0x61);  // tres
-  this->data(0x02);     // 600px
-  this->data(0x58);
-  this->data(0x01);  // 448px
-  this->data(0xC0);
   // COMMAND DUAL SPI MODE
   this->command(0x41);
   this->data(0x00);
@@ -1127,6 +1124,15 @@ void WaveshareEPaper5P6In::initialize() {
   // COMMAND TCON SETTING
   this->command(0x60);
   this->data(0x22);
+  // COMMAND RESOLUTION SETTING
+  this->command(0x61);  // tres
+  this->data(0x02);     // 600px
+  this->data(0x58);
+  this->data(0x01);  // 448px
+  this->data(0xC0);
+  // COMMAND PANEL SETTING
+  this->command(0x00);
+  this->data(0x0F);  // KW3f, KWR-2F, BWROTP 0f, BWOTP 1f
   // COMMAND RESOLUTION SETTING
   this->command(0x61);
   this->data(0x02);
