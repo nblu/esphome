@@ -1103,10 +1103,10 @@ void WaveshareEPaper5P6In::initialize() {
 
   // COMMAND POWER SETTING
   this->command(0x01);
-  this->data(0x07);
-  this->data(0x07);  // VGH=20V,VGL=-20V
-  this->data(0x3f);  // VDH=15V
-  this->data(0x3f);  // VDL=-15V
+  this->data(0x37);
+  this->data(0x00);  // VGH=20V,VGL=-20V
+  this->data(0x05);  // VDH=15V
+  this->data(0x05);  // VDL=-15V
   // COMMAND POWER ON
   this->command(0x04);
   delay(100);  // NOLINT
@@ -1114,12 +1114,12 @@ void WaveshareEPaper5P6In::initialize() {
   // COMMAND PANEL SETTING
   this->command(0x00);
   this->data(0x0F);  // KW3f, KWR-2F, BWROTP 0f, BWOTP 1f
-  // // COMMAND RESOLUTION SETTING
-  // this->command(0x61);  // tres
-  // this->data(0b10000000);     // 800px
-  // this->data(0x20);
-  // this->data(0x01);  // 400px
-  // this->data(0xE0);
+  // COMMAND RESOLUTION SETTING
+  this->command(0x61);  // tres
+  this->data(0x03);     // 800px
+  this->data(0x20);
+  this->data(0x01);  // 400px
+  this->data(0xE0);
   // COMMAND DUAL SPI MODE
   this->command(0x15);
   this->data(0x00);
