@@ -1114,12 +1114,12 @@ void WaveshareEPaper5P6In::initialize() {
   // COMMAND PANEL SETTING
   this->command(0x00);
   this->data(0x0F);  // KW3f, KWR-2F, BWROTP 0f, BWOTP 1f
-  // COMMAND RESOLUTION SETTING
-  this->command(0x61);  // tres
-  this->data(0x03);     // 800px
-  this->data(0x20);
-  this->data(0x01);  // 400px
-  this->data(0xE0);
+  // // COMMAND RESOLUTION SETTING
+  // this->command(0x61);  // tres
+  // this->data(0b10000000);     // 800px
+  // this->data(0x20);
+  // this->data(0x01);  // 400px
+  // this->data(0xE0);
   // COMMAND DUAL SPI MODE
   this->command(0x15);
   this->data(0x00);
