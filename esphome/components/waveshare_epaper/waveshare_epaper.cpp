@@ -1096,49 +1096,46 @@ void WaveshareEPaper4P2InBV2::dump_config() {
   LOG_UPDATE_INTERVAL(this);
 }
 
+// 5.62inch display using UC8151
+// Datasheet https://v4.cecdn.yun300.cn/100001_1909185148/UC8151C-1.pdf
 void WaveshareEPaper5P6In::initialize() {
   this->reset_();
 
   // COMMAND POWER SETTING
   this->command(0x01);
-  this->data(0x37);
-  this->data(0x00);  // VGH=20V,VGL=-20V
-  this->data(0x05);  // VDH=15V
-  this->data(0x05);  // VDL=-15V
-  // COMMAND BOOSTER SOFT START
-  this->command(0x06);
-  this->data(0xC7);
-  this->data(0xC7);
-  this->data(0x1D);
+  this->data(0x07);
+  this->data(0x07);  // VGH=20V,VGL=-20V
+  this->data(0x3f);  // VDH=15V
+  this->data(0x3f);  // VDL=-15V
   // COMMAND POWER ON
-  this->command(0x30);
-  this->data(0x39);
+  this->command(0x04);
   delay(100);  // NOLINT
   this->wait_until_idle_();
-  // COMMAND DUAL SPI MODE
-  this->command(0x41);
-  this->data(0x00);
-  // COMMAND VCOM AND DATA INTERVAL SETTING
-  this->command(0x50);
-  this->data(0x37);
-  // COMMAND TCON SETTING
-  this->command(0x60);
-  this->data(0x22);
-  // COMMAND RESOLUTION SETTING
-  this->command(0x61);  // tres
-  this->data(0x02);     // 600px
-  this->data(0x58);
-  this->data(0x01);  // 448px
-  this->data(0xC0);
   // COMMAND PANEL SETTING
   this->command(0x00);
   this->data(0x0F);  // KW3f, KWR-2F, BWROTP 0f, BWOTP 1f
   // COMMAND RESOLUTION SETTING
-  this->command(0x61);
-  this->data(0x02);
-  this->data(0x58);  // 800*480
-  this->data(0x01);
-  this->data(0xC0);
+  this->command(0x61);  // tres
+  this->data(0x03);     // 800px
+  this->data(0x20);
+  this->data(0x01);  // 400px
+  this->data(0xE0);
+  // COMMAND DUAL SPI MODE
+  this->command(0x15);
+  this->data(0x00);
+  // COMMAND VCOM AND DATA INTERVAL SETTING
+  this->command(0x50);
+  this->data(0x11);
+  this->data(0x07);
+  // COMMAND TCON SETTING
+  this->command(0x60);
+  this->data(0x22);
+  // COMMAND RESOLUTION SETTING
+  this->command(0x65);
+  this->data(0x00);
+  this->data(0x00);  // 800*480
+  this->data(0x00);
+  this->data(0x00);
 }
 void HOT WaveshareEPaper5P6In::display() {
   const size_t buffer_length = this->get_buffer_length_() / this->get_color_internal();
