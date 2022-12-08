@@ -1138,19 +1138,27 @@ void WaveshareEPaper5P6In::initialize() {
   // this->data(0x00);
 }
 void HOT WaveshareEPaper5P6In::display() {
-  const size_t buffer_length = this->get_buffer_length_();
-  // / this->get_color_internal();
+  const size_t buffer_length = this->get_buffer_length_() / this->get_color_internal();
   ESP_LOGCONFIG(TAG, "buffer_length %i", int(buffer_length));
 
   this->command(0x04);  // turn on
 
   this->command(0x92);  // disable partial mode
 
-  // COMMAND DATA START TRANSMISSION 1 (color data)
-  this->command(0x13);
+  // COMMAND DATA START TRANSMISSION 1 (B/W data)
+  this->command(0x10);
   delay(2);
   this->start_data_();
   for (size_t i = 0; i < buffer_length; i++)
+    this->write_byte(~this->buffer_[i]);
+  this->end_data_();
+  delay(2);
+
+  // COMMAND DATA START TRANSMISSION 2 (RED data)
+  this->command(0x13);
+  delay(2);
+  this->start_data_();
+  for (size_t i = buffer_length; i < this->get_buffer_length_(); i++)
     this->write_byte(~this->buffer_[i]);
   this->end_data_();
   delay(2);
