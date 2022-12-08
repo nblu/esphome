@@ -1139,6 +1139,7 @@ void WaveshareEPaper5P6In::initialize() {
 }
 void HOT WaveshareEPaper5P6In::display() {
   const size_t buffer_length = this->get_buffer_length_() / this->get_color_internal();
+  ESP_LOGCONFIG(TAG, "buffer_length %i", int(buffer_length));
 
   this->command(0x04);  // turn on
 
