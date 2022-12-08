@@ -310,7 +310,7 @@ class WaveshareEPaper4P2InBV2 : public WaveshareEPaper {
     this->data(0xA5);  // check code
   }
 
-  int get_color_internal() override { return 2; }
+  int get_color_internal() override { return 7; }
 
   uint8_t get_color_list_internal(uint8_t indexColor) override {
     if (indexColor == 1)
