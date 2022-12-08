@@ -1096,78 +1096,148 @@ void WaveshareEPaper4P2InBV2::dump_config() {
   LOG_UPDATE_INTERVAL(this);
 }
 
+// ========================================================
 // 5.62inch display using UC8151
 // Datasheet https://v4.cecdn.yun300.cn/100001_1909185148/UC8151C-1.pdf
+// ========================================================
 void WaveshareEPaper5P6In::initialize() {
   this->reset_();
-
-  // COMMAND POWER SETTING
-  this->command(0x01);
+  this->command(0x00); // Panel Settings
+  this->data(0xEF);
+  this->data(0x08);
+  this->command(0x01); // Power Settings
   this->data(0x37);
-  this->data(0x00);  // VGH=20V,VGL=-20V
-  this->data(0x05);  // VDH=15V
-  this->data(0x05);  // VDL=-15V
-  // COMMAND POWER ON
-  this->command(0x04);
-  delay(100);  // NOLINT
-  this->wait_until_idle_();
-  // COMMAND PANEL SETTING
-  this->command(0x00);
-  this->data(0x0F);  // KW3f, KWR-2F, BWROTP 0f, BWOTP 1f
-  // COMMAND RESOLUTION SETTING
-  this->command(0x61);  // tres
-  this->data(0x03);     // 800px
-  this->data(0x20);
-  this->data(0x01);  // 400px
-  this->data(0xE0);
-  // COMMAND DUAL SPI MODE
-  this->command(0x15);
   this->data(0x00);
-  // COMMAND VCOM AND DATA INTERVAL SETTING
-  this->command(0x50);
-  this->data(0x11);
-  this->data(0x07);
-  // COMMAND TCON SETTING
-  this->command(0x60);
+  this->data(0x23);
+  this->data(0x23);
+  this->command(0x03); // Power Off Sequence
+  this->data(0x00);
+  this->command(0x06); // Booster Soft Start
+  this->data(0xC7);
+  this->data(0xC7);
+  this->data(0x1D);
+  this->command(0x30); // PLL Control
+  this->data(0x3C);    // 50 Hz
+  this->command(0x40); // Temperature Sensor Command
+  this->data(0x00);    // ??
+  this->command(0x50); // VCOM and Data Interval Setting
+  this->data(0x37);    // white border
+  this->command(0x60); // undocumented
   this->data(0x22);
-  // COMMAND RESOLUTION SETTING
-  // this->command(0x65);
-  // this->data(0x00);
-  // this->data(0x00);  // 800*480
-  // this->data(0x00);
-  // this->data(0x00);
+  this->command(0x61); // Resolution Setting
+  this->data(0x02);
+  this->data(0x58);
+  this->data(0x01);
+  this->data(0xC0);
+  this->command(0xE3); // undocumented
+  this->data(0xAA);
+  delay(100);
+  this->command(0x50); // VCOM and Data Interval Setting
+  this->data(0x37);    // white border
 }
 void HOT WaveshareEPaper5P6In::display() {
+
   const size_t buffer_length = this->get_buffer_length_() / this->get_color_internal();
   ESP_LOGCONFIG(TAG, "buffer_length %i", int(buffer_length));
+//   for (int i = 0;i < this->get_height_internal();i++)
 
-  this->command(0x04);  // turn on
+//   //   ESP_LOGCONFIG(TAG, "buffer row %i %s", i, (char *)buffer_[i + i * this->get_width_internal()]);
+  this->command(0x04);  // PON
+  this->command(0x12);  // DRF
+  this->command(0x02);  // POF
 
-  this->command(0x92);  // disable partial mode
+  this->command(0x92);  // disable partial mode PTOUT
+  uint8_t red = 0b100;
 
-  // // COMMAND DATA START TRANSMISSION 1 (B/W data)
-  // this->command(0x10);
-  // delay(2);
-  // this->start_data_();
-  // for (size_t i = 0; i < buffer_length; i++)
-  //   this->write_byte(~this->buffer_[i]);
-  // this->end_data_();
-  // delay(2);
+  this->command(0x61); // Resolution Setting
+  this->data(0x02);
+  this->data(0x58);
+  this->data(0x01);
+  this->data(0xC0);
 
-  // COMMAND DATA START TRANSMISSION 2 (DTM2 data)
-  this->command(0x13);
-  delay(2);
+  // clear display
+  this->command(0x10);
+  for (uint32_t i = 0; i < 134400; i++)
+  {
+    this->data(0x77);
+  } 
+
+  this->command(0x10);
   this->start_data_();
-  for (size_t i = 0; i < this->get_buffer_length_(); i++)
+
+  for (uint32_t i = 0; i < uint32_t(this->get_width_internal()) * uint32_t(this->get_height_internal()) / 2; i++)
+  {
+    int row = round(i/this->get_height_internal());
+    switch (row/28) {
+      default: 
+        this->write_byte(0b00000000);
+        break;
+      case 1:
+        this->write_byte(0b00100010);
+        break;
+      case 2: 
+        this->write_byte(0b01000100);
+        break;
+      case 3: 
+        this->write_byte(0b01100110);
+        break;
+      case 4: 
+        this->write_byte(0b10001000);
+        break;
+      case 5: 
+        this->write_byte(0b10101010);
+        break;
+      case 6:
+        this->write_byte(0b11001100);
+        break;
+    }
+  }
+  for (uint32_t i = 0; i < 10; i++) {
+    //for (size_t i = 0; i < buffer_length; i++) {
+    //this->write_byte(red);
     this->write_byte(~this->buffer_[i]);
+  }
   this->end_data_();
   delay(2);
 
-  // COMMAND DISPLAY REFRESH
-  this->command(0x11);
+//   // COMMAND DATA START TRANSMISSION 1 (B/W data)
+//   this->command(0x10);
+//   delay(2);
+//   this->start_data_();
+//   for (uint32_t i = 0; i < uint32_t(this->get_width_internal()) * uint32_t(this->get_height_internal()) / 2; i++)
+//   {
+//     this->write_byte(0xff);
+//   }
+//   // this->write_array(this->buffer_, this->get_buffer_length_());
+  
+//   // for (size_t i = 0; i < buffer_length; i++) {
+//   //   //this->write_byte(red);
+//   //   this->write_byte(~this->buffer_[i]);
+//   // }
+//   this->end_data_();
+//   delay(2);
+
+// //   // COMMAND DATA START TRANSMISSION 2 (DTM2 data)
+// //   this->command(0x13);
+// //   delay(2);
+// //   this->start_data_();
+// //   for (size_t i = 0; i < buffer_length; i++)
+// //     this->write_byte(red);
+// // //    this->write_byte(~this->buffer_[i]);
+// //   this->end_data_();
+// //   delay(2);
+
+//   // PON
+//   this->command(0x04);
+
+//   // // COMMAND DISPLAY REFRESH
+//   // this->command(0x11);
 
   // COMMAND DISPLAY REFRESH
   this->command(0x12);
+
+  //POFF
+  this->command(0x02);
 
   delay(100);  // NOLINT
   this->wait_until_idle_();
