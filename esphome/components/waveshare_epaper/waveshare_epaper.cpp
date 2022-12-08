@@ -1145,20 +1145,20 @@ void HOT WaveshareEPaper5P6In::display() {
 
   this->command(0x92);  // disable partial mode
 
-  // COMMAND DATA START TRANSMISSION 1 (B/W data)
-  this->command(0x10);
-  delay(2);
-  this->start_data_();
-  for (size_t i = 0; i < buffer_length; i++)
-    this->write_byte(~this->buffer_[i]);
-  this->end_data_();
-  delay(2);
+  // // COMMAND DATA START TRANSMISSION 1 (B/W data)
+  // this->command(0x10);
+  // delay(2);
+  // this->start_data_();
+  // for (size_t i = 0; i < buffer_length; i++)
+  //   this->write_byte(~this->buffer_[i]);
+  // this->end_data_();
+  // delay(2);
 
   // COMMAND DATA START TRANSMISSION 2 (DTM2 data)
   this->command(0x13);
   delay(2);
   this->start_data_();
-  for (size_t i = buffer_length; i < this->get_buffer_length_(); i++)
+  for (size_t i = 0; i < this->get_buffer_length_(); i++)
     this->write_byte(~this->buffer_[i]);
   this->end_data_();
   delay(2);
