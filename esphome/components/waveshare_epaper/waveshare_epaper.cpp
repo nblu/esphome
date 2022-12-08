@@ -1131,11 +1131,11 @@ void WaveshareEPaper5P6In::initialize() {
   this->command(0x60);
   this->data(0x22);
   // COMMAND RESOLUTION SETTING
-  this->command(0x65);
-  this->data(0x00);
-  this->data(0x00);  // 800*480
-  this->data(0x00);
-  this->data(0x00);
+  // this->command(0x65);
+  // this->data(0x00);
+  // this->data(0x00);  // 800*480
+  // this->data(0x00);
+  // this->data(0x00);
 }
 void HOT WaveshareEPaper5P6In::display() {
   const size_t buffer_length = this->get_buffer_length_() / this->get_color_internal();
