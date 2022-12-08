@@ -1140,8 +1140,12 @@ void WaveshareEPaper5P6In::initialize() {
 void HOT WaveshareEPaper5P6In::display() {
   const size_t buffer_length = this->get_buffer_length_() / this->get_color_internal();
 
+  this->command(0x04);  // turn on
+
+  this->command(0x92);  // disable partial mode
+
   // COMMAND DATA START TRANSMISSION 1 (color data)
-  this->command(0x10);
+  this->command(0x13);
   delay(2);
   this->start_data_();
   for (size_t i = 0; i < buffer_length; i++)
@@ -1150,7 +1154,11 @@ void HOT WaveshareEPaper5P6In::display() {
   delay(2);
 
   // COMMAND DISPLAY REFRESH
+  this->command(0x11);
+
+  // COMMAND DISPLAY REFRESH
   this->command(0x12);
+
   delay(100);  // NOLINT
   this->wait_until_idle_();
 }
