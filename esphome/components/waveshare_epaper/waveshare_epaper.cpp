@@ -1154,7 +1154,7 @@ void HOT WaveshareEPaper5P6In::display() {
   this->end_data_();
   delay(2);
 
-  // COMMAND DATA START TRANSMISSION 2 (RED data)
+  // COMMAND DATA START TRANSMISSION 2 (DTM2 data)
   this->command(0x13);
   delay(2);
   this->start_data_();
