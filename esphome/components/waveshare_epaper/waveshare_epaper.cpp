@@ -1157,7 +1157,7 @@ void HOT WaveshareEPaper5P6In::display() {
 
   // clear display
   this->command(0x10);
-  for (uint32_t i = 0; i < 134400; i++)
+  for (uint32_t i = 0; i < buffer_length*4; i++)
   {
     this->data(0x77);
   } 
@@ -1192,11 +1192,14 @@ void HOT WaveshareEPaper5P6In::display() {
         break;
     }
   }
-  for (uint32_t i = 0; i < 10; i++) {
-    //for (size_t i = 0; i < buffer_length; i++) {
-    //this->write_byte(red);
-    this->write_byte(~this->buffer_[i]);
-  }
+  //for (uint32_t i = 0; i < 10; i++) {
+  // for (size_t i = 0; i < buffer_length; i++) {
+  //   //this->write_byte(red);
+  //   this->write_byte(this->buffer_[i]);
+  //   this->write_byte(this->buffer_[i]);
+  //   this->write_byte(this->buffer_[i]);
+  //   this->write_byte(this->buffer_[i]);
+  // }
   this->end_data_();
   delay(2);
 
