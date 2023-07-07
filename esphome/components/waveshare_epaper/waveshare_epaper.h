@@ -343,11 +343,7 @@ class WaveshareEPaper5P6In : public WaveshareEPaper {
     this->data(0xA5);  // check byte
   }
 
-<<<<<<< HEAD
-  int get_color_internal() override { return 4; }
-=======
   int get_color_internal() override { return 2; }
->>>>>>> esphome-dev
 
   uint8_t get_color_list_internal(uint8_t indexColor) override {
     if (indexColor == 1)
